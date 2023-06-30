@@ -7,7 +7,7 @@ import numpy as np
 
 
 path = '/home/goodchair/praksesafe/'
-savePath = '/home/goodchair/praksesafe/result'
+savePath = '/home/goodchair/praksesafe/Bottle_ICP/Example'
 
 bottleDown = cc.loadPointCloud(os.path.join(path, 'cosmetic_down.ply'))
 bottleUp = cc.loadPointCloud(os.path.join(path, 'cosmetic_up.ply'))
@@ -55,7 +55,7 @@ for count in range(1, 4, 1):
     cc.SaveEntities([turnedBottle, initBottleUp], os.path.join(savePath, initName))
     cc.SaveEntities([ICPbottle, bottleUp], os.path.join(savePath, endName))
     np.save(os.path.join(savePath, arrayName), array44)
-    
-    cycle = f"{count}. cycle complete"
+
+    cycle = f"{count}.cycle complete"
     print(cycle)
 
