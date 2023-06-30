@@ -7,8 +7,8 @@ import pdb
 path = '/home/goodchair/praksesafe/'
 savePath = '/home/goodchair/praksesafe/Bottle_ICP/Example'
 
-bottleDown = cc.loadPointCloud(os.path.join(path, 'cosmetic_down.ply'))
-bottleUp = cc.loadPointCloud(os.path.join(path, 'cosmetic_up.ply'))
+bottleDown = cc.loadPointCloud(os.path.join(path, 'mouthwash_down.ply'))
+bottleUp = cc.loadPointCloud(os.path.join(path, 'mouthwash_up.ply'))
 initBottleDown = bottleDown.cloneThis()
 initBottleUp = bottleUp.cloneThis()
 
@@ -16,20 +16,18 @@ print('cloud name:')
 print(bottleDown.getName())
 print(bottleUp.getName())
 
-print('Lower the score the better\n')
-
-for count in range(1, 2):
+for count in range(1, 6):
     alignBottle = bottleDown
     turnedBottle = initBottleDown
 
     rad = random.uniform(0.0, np.pi)
     
     turn = cc.ccGLMatrix()
-    turn.initFromParameters(0.2, (1., 1., 1.), (0., 0., 0.))
+    turn.initFromParameters(rad, (1., 1., 1.), (0., 0., 0.))
     alignBottle.applyRigidTransformation(turn)
     turnedBottle.applyRigidTransformation(turn)
     
-    alignedBottle = cc.ICP(alignBottle, bottleUp, 1.5, 1200, 15000, True, cc.CONVERGENCE_TYPE.MAX_ITER_CONVERGENCE, False)
+    alignedBottle = cc.ICP(alignBottle, bottleUp, 1.e-100, 1200, 15000, True, cc.CONVERGENCE_TYPE.MAX_ITER_CONVERGENCE, False)
     score = "{:e}".format(alignedBottle.finalRMS)
     #pdb.set_trace()
     
