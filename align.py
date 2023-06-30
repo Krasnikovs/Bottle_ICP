@@ -1,18 +1,16 @@
 import os
 import cloudComPy as cc
-import math
 import random
 import numpy as np
-
-
+import pdb
 
 path = '/home/goodchair/praksesafe/'
 savePath = '/home/goodchair/praksesafe/Bottle_ICP/Example'
 
 bottleDown = cc.loadPointCloud(os.path.join(path, 'cosmetic_down.ply'))
 bottleUp = cc.loadPointCloud(os.path.join(path, 'cosmetic_up.ply'))
-initBottleDown = cc.loadPointCloud(os.path.join(path, 'cosmetic_down.ply'))
-initBottleUp = cc.loadPointCloud(os.path.join(path, 'cosmetic_up.ply'))
+initBottleDown = bottleDown.cloneThis()
+initBottleUp = bottleUp.cloneThis()
 
 print('cloud name:')
 print(bottleDown.getName())
@@ -20,37 +18,35 @@ print(bottleUp.getName())
 
 print('Lower the score the better\n')
 
-for count in range(1, 4, 1):
+for count in range(1, 2):
     alignBottle = bottleDown
     turnedBottle = initBottleDown
 
-    degrees = random.uniform(0.0, 1.0)
-    degrees = round(degrees, 2)
+    rad = random.uniform(0.0, np.pi)
     
     turn = cc.ccGLMatrix()
-    turn.initFromParameters(degrees*math.pi,(1., 1., 1.), (0., 0., 0.))
+    turn.initFromParameters(0.2, (1., 1., 1.), (0., 0., 0.))
     alignBottle.applyRigidTransformation(turn)
     turnedBottle.applyRigidTransformation(turn)
     
     alignedBottle = cc.ICP(alignBottle, bottleUp, 1.5, 1200, 15000, True, cc.CONVERGENCE_TYPE.MAX_ITER_CONVERGENCE, False)
-    score = alignedBottle.finalPointCount
-
+    score = "{:e}".format(alignedBottle.finalRMS)
+    #pdb.set_trace()
+    
     tranBottle = alignedBottle.transMat
     ICPbottle = alignedBottle.aligned
     ICPbottle.applyRigidTransformation(tranBottle)
 
     array44 = np.array(tranBottle.data())
 
-    pricesDegrees = round(180*degrees)
-    
     initBottleUp.setName('init_B')
     turnedBottle.setName('init_A')
     ICPbottle.setName('end_A')
     bottleUp.setName('end_B')
 
-    initName = f"{count}_{pricesDegrees}_{score}_init.bin"
-    endName = f"{count}_{pricesDegrees}_{score}_end.bin"
-    arrayName = f"{count}_{pricesDegrees}_{score}_array.npy"
+    initName = f"{count}_{score}_init.bin"
+    endName = f"{count}_{score}_end.bin"
+    arrayName = f"{count}_{score}_array.npy"
 
     cc.SaveEntities([turnedBottle, initBottleUp], os.path.join(savePath, initName))
     cc.SaveEntities([ICPbottle, bottleUp], os.path.join(savePath, endName))
@@ -58,4 +54,3 @@ for count in range(1, 4, 1):
 
     cycle = f"{count}.cycle complete"
     print(cycle)
-
