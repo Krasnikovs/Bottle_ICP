@@ -27,7 +27,7 @@ for count in range(1, 6):
     alignBottle.applyRigidTransformation(turn)
     turnedBottle.applyRigidTransformation(turn)
     
-    alignedBottle = cc.ICP(alignBottle, bottleUp, 1.e-100, 1200, 15000, True, cc.CONVERGENCE_TYPE.MAX_ITER_CONVERGENCE, False)
+    alignedBottle = cc.ICP(alignBottle, bottleUp, 1.e-100, 1200, 15000, False, cc.CONVERGENCE_TYPE.MAX_ITER_CONVERGENCE, False)
     score = "{:e}".format(alignedBottle.finalRMS)
     #pdb.set_trace()
     
